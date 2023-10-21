@@ -1,26 +1,38 @@
-import pygame
+# import pygame
+#
+# def init():
+#     pygame.init()
+#     win = pygame.display.set_mode((400,400))
+#
+# def getKey(keyname):
+#     ans = False
+#     for eve in pygame.event.get() : pass
+#     keyInput = pygame.key.get_pressed()
+#     myKey = getattr(pygame,'K_{}'.format(keyname))
+#
+#     if keyInput[myKey]:
+#         ans = True
+#     pygame.display.update()
+#
+#     return ans
+#
+# def main():
+#     print(getKey("a"))
+#
+# if __name__ == '__main__' :
+#     init()
+#     while True:
+#         main()
 
-def init():
-    pygame.init()
-    win = pygame.display.set_mode((400,400))
+from  djitellopy import Tello
 
-def getKey(keyname):
-    ans = False
-    for eve in pygame.event.get() : pass
-    keyInput = pygame.key.get_pressed()
-    myKey = getattr(pygame,'K_{}'.format(keyname))
+tello = Tello()
 
-    if keyInput[myKey]:
-        ans = True
-    pygame.display.update()
+tello.connect()
+tello.takeoff()
 
-    return ans
+tello.move_left(100)
+tello.rotate_clockwise(90)
+tello.move_forward(100)
 
-def main():
-    print(getKey("a"))
-
-if __name__ == '__main__' :
-    init()
-    while True:
-        main()
-
+tello.land()
