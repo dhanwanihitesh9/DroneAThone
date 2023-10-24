@@ -4,6 +4,12 @@ from time import sleep
 import time
 import numpy as np
 
+print("Initializing Path and variables")
+
+circuit = ["R", "Y", "R", "Y", "R", "Y", "R", "Y"]
+mileStone = ["N", "N", "N", "N", "N", "N", "N", "N"]
+directionGuide = ["M", "M", "M", "M", "M", "M", "M", "M"]
+
 # initialize and connect with drone
 print("Initializing and connecting to drone")
 Drone = tello.Tello()
@@ -68,13 +74,22 @@ def findRingPosition(img):
             angle = 0
             if radiusSquare <= 40000:
                 if largest_circle[2] >= 400:
+                    print("Target found")
+                    cv2.putText(img, 'Ring Found - move towards target ' + str(largest_circle[2]), (00, 185),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1,
+                                (0, 255, 0), 1, cv2.LINE_AA, False)
                     # move forward
                     timeLapsed = 0
-                    while timeLapsed <= 1:
+                    while timeLapsed <= 1.5:
                         print(Drone.send_rc_control(0, 50, 0, 0))
                         sleep(0.25)
                         timeLapsed = timeLapsed + 0.25
-                    Drone.land();
+                    # yaw
+                    timeLapsed = 0
+                    while timeLapsed <= 1.75:
+                        print(Drone.send_rc_control(0, 0, 0, 100))
+                        sleep(0.25)
+                        timeLapsed = timeLapsed + 0.25
                 else:
                     print("move forward")
                     cv2.putText(img, 'Ring Found - move forward ' + str(largest_circle[2]), (00, 185),
@@ -169,7 +184,7 @@ Drone.takeoff()
 timeLapsed = 0
 # # # while(Drone.get_height()<=40):
 # # #     print(Drone.send_rc_control(0, 0, 50, 0))
-while timeLapsed <= 1:
+while timeLapsed <= 2:
     Drone.send_rc_control(0,0,50,0)
     sleep(0.25)
     timeLapsed = timeLapsed + 0.25
@@ -181,11 +196,13 @@ x = 0
 while True:
 
     img = Drone.get_frame_read().frame
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     cv2.waitKey(1)
     values = findRingPosition(img)
     cv2.circle(img, (int(width/2), int(height/2)), int(width/2), (0, 255, 0), 2)
     cv2.circle(img, (int(width / 2), int(height / 2)), int(height / 2), (0, 255, 0), 2)
-    cv2.circle(img, (int(width / 2), int(height / 2)), 200, (0, 255, 0), 2)
+    cv2.circle(img, (int(width / 2), int(height / 2)), 200, (255, 0, 0), 2)
+    cv2.circle(img, (int(width / 2), int(height / 2)), 100, (255, 255, 0), 2)
     cv2.putText(img, "Speed "+str(values), (00, 20), cv2.FONT_HERSHEY_SIMPLEX, 1,
                 (0, 255, 255), 1, cv2.LINE_AA, False)
     cv2.imshow("Circle Detection", img)
